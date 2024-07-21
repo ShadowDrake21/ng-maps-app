@@ -1,0 +1,20 @@
+<google-map height="100%" width="100%" [options]="options">
+  @for (location of nzLocations; track location; let index = $index) {
+  <map-advanced-marker
+    #markerElem="mapAdvancedMarker"
+    [position]="{ lat: location.lat, lng: location.lng }"
+    [content]="location.content"
+    [title]="'Location ' + (index + 1)"
+    (mapClick)="onMarkerClick(markerElem)"
+  />
+  } @for (location of auLocations; track location; let index = $index) {
+  <map-advanced-marker
+    #markerElem="mapAdvancedMarker"
+    [position]="{ lat: location.lat, lng: location.lng }"
+    [content]="location.content"
+    [title]="'Location ' + (index + 1)"
+    (mapClick)="onMarkerClick(markerElem)"
+  />
+  }
+  <map-info-window #infoWindow></map-info-window>
+</google-map>
