@@ -27,8 +27,8 @@ export class MapComponent implements OnInit, OnDestroy {
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
   options: google.maps.MapOptions = {
     mapId: 'b2d26fb27242f142',
-    center: { lat: 52.2469807, lng: 21.0428754 },
-    zoom: 4,
+    center: { lat: 51.5073219, lng: -0.1276474 },
+    zoom: 6,
     minZoom: 2,
     fullscreenControl: false,
     restriction: {
