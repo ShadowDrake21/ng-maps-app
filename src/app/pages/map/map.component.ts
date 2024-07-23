@@ -20,7 +20,7 @@ import { Subscription, tap } from 'rxjs';
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
-export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy {
   // App: 'Miejsca które chcę zobaczyć'
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
@@ -29,6 +29,17 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     mapId: 'b2d26fb27242f142',
     center: { lat: 52.2469807, lng: 21.0428754 },
     zoom: 4,
+    minZoom: 2,
+    fullscreenControl: false,
+    restriction: {
+      latLngBounds: {
+        north: 85,
+        south: -85,
+        west: -180,
+        east: 180,
+      },
+      strictBounds: false,
+    },
   };
 
   mapInitialized = false;
@@ -92,18 +103,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   zoomChanged() {
     if (this.mapInitialized) {
       const zoomLevel = this.googleMap.getZoom();
-      if (zoomLevel !== undefined && zoomLevel <= 2) {
+      if (zoomLevel !== undefined && zoomLevel < 2) {
         console.log('zoomChanged', this.googleMap.getZoom());
         this.googleMap.googleMap?.setZoom(2);
       }
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.googleMap.mapInitialized.subscribe(() => {
-      this.mapInitialized = true;
-      this.zoomChanged();
-    });
   }
 
   ngOnDestroy(): void {
