@@ -29,7 +29,7 @@ export class OpenStreetMap {
 
   public getPlaceDetails(
     osmType: string,
-    osmId: number
+    osmId: string
   ): Observable<IPlaceDetails> {
     const params = new HttpParams().appendAll({
       osmtype: osmType,

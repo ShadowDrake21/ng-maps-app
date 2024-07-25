@@ -14,9 +14,44 @@
         </mat-form-field>
       </div>
       <div>
-        <div *ngIf="foundPlaces$ | async as foundPlaces">
+        <div *ngIf="foundPlacesDetails$ | async as foundPlaces">
           <ng-container *ngFor="let place of foundPlaces; trackBy: trackById">
-            {{ place | json }}
+            <div>
+              <h3>Name: {{ place.localname }}</h3>
+              <h5>Type: {{ place.type }}</h5>
+              <p>Country: {{ place.country_code | uppercase }}</p>
+              <p *ngIf="place.addresstags.postcode">
+                Post code: {{ place.addresstags.postcode }}
+              </p>
+              <div>
+                <h6>Additional info</h6>
+                <img
+                  *ngIf="place.extratags.flag"
+                  [src]="place.extratags.flag"
+                  width="160"
+                  height="100"
+                  alt="flag"
+                />
+                <p *ngIf="place.extratags.population">
+                  Population: {{ +place.extratags.population / 1000000 }} mln.
+                </p>
+                <p *ngIf="place.extratags.phone">
+                  Phone: {{ place.extratags.phone }}
+                </p>
+                <p *ngIf="place.extratags.wikidata">
+                  Wikidata: {{ place.extratags.wikidata }}
+                </p>
+                <p *ngIf="place.extratags.wikipedia">
+                  Wikidata: {{ place.extratags.wikipedia }}
+                </p>
+                <p *ngIf="place.extratags.website">
+                  Website: {{ place.extratags.website }}
+                </p>
+                <p *ngIf="place.extratags.phone">
+                  Phone: {{ place.extratags.phone }}
+                </p>
+              </div>
+            </div>
           </ng-container>
         </div>
       </div>

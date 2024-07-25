@@ -39,11 +39,18 @@ export interface IPlaceDetailsNames {
 
 export interface IPlaceDetailsAddresstags {
   postcode: string;
+  city?: string;
+  state?: string;
+  street?: string;
 }
 
 export interface IPlaceDetailsExtratags {
   wikidata: string;
   wikipedia: string;
+  flag?: string;
+  website?: string;
+  phone?: string;
+  population?: string;
 }
 
 export interface IPlaceDetailsCentroid {

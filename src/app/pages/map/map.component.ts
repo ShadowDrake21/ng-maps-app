@@ -13,10 +13,13 @@ import {
   MapInfoWindow,
 } from '@angular/google-maps';
 import {
+  combineLatest,
   debounceTime,
   distinctUntilChanged,
+  map,
   Observable,
   Subscription,
+  switchMap,
   tap,
 } from 'rxjs';
 import { OpenStreetMap } from '../../core/services/openStreetMap.service';
@@ -29,7 +32,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { IPlace } from '../../shared/models/featureCollection.interface';
-import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import {
+  AsyncPipe,
+  JsonPipe,
+  NgFor,
+  NgIf,
+  UpperCasePipe,
+} from '@angular/common';
+import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
 
 @Component({
   selector: 'app-map',
@@ -43,6 +53,7 @@ import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
     NgIf,
     NgFor,
     JsonPipe,
+    UpperCasePipe,
   ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
@@ -73,6 +84,7 @@ export class MapComponent implements OnInit, OnDestroy {
   searchControl = new FormControl('', [Validators.required]);
 
   foundPlaces$!: Observable<IPlace[]>;
+  foundPlacesDetails$!: Observable<IPlaceDetails[]>;
 
   private subscriptions: Subscription[] = [];
 
@@ -133,28 +145,54 @@ export class MapComponent implements OnInit, OnDestroy {
   // }
 
   searchOnMap() {
-    this.searchControl.valueChanges
+    const valueChangesSubscription = this.searchControl.valueChanges
       .pipe(debounceTime(700), distinctUntilChanged())
       .subscribe((value) => {
         if (value) {
-          this.foundPlaces$ = this.openStreetMapService.searchPlace(value).pipe(
-            tap((places) => {
-              if (places.length > 0) {
-                const newCenter = {
-                  lat: places[0].geometry.coordinates[1],
-                  lng: places[0].geometry.coordinates[0],
-                };
-                this.googleMap.panTo(newCenter);
-                this.googleMap.googleMap?.setZoom(10);
-              }
-            })
-          );
+          this.foundPlacesDetails$ = this.openStreetMapService
+            .searchPlace(value)
+            .pipe(
+              tap((places) => {
+                if (places.length > 0) {
+                  const newCenter = {
+                    lat: places[0].geometry.coordinates[1],
+                    lng: places[0].geometry.coordinates[0],
+                  };
+                  this.googleMap.panTo(newCenter);
+                  this.googleMap.googleMap?.setZoom(10);
+                }
+              }),
+              switchMap((places) => {
+                console.log('places', places);
+                const detailsObservables = places.map((place) =>
+                  this.openStreetMapService.getPlaceDetails(
+                    this.getCorrectOsmType(
+                      place.properties.osm_type as 'node' | 'way' | 'relation'
+                    ),
+                    place.properties.osm_id
+                  )
+                );
+                return combineLatest(detailsObservables);
+              })
+            );
         }
       });
+
+    this.subscriptions.push(valueChangesSubscription);
   }
 
-  trackById(index: number, place: IPlace) {
-    return place.properties.place_id;
+  getCorrectOsmType(value: 'node' | 'way' | 'relation') {
+    if (value === 'node') {
+      return 'N';
+    } else if (value === 'way') {
+      return 'W';
+    } else {
+      return 'R';
+    }
+  }
+
+  trackById(index: number, placeDetail: IPlaceDetails) {
+    return placeDetail.place_id;
   }
 
   ngOnDestroy(): void {
