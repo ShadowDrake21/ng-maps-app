@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -11,17 +12,44 @@ import {
   MapAdvancedMarker,
   MapInfoWindow,
 } from '@angular/google-maps';
-import { Subscription, tap } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  Subscription,
+  tap,
+} from 'rxjs';
+import { OpenStreetMap } from '../../core/services/openStreetMap.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { IPlace } from '../../shared/models/featureCollection.interface';
+import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [GoogleMapsModule],
+  imports: [
+    GoogleMapsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    AsyncPipe,
+    NgIf,
+    NgFor,
+    JsonPipe,
+  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit, OnDestroy {
   // App: 'Miejsca które chcę zobaczyć'
+  private openStreetMapService = inject(OpenStreetMap);
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
@@ -42,7 +70,10 @@ export class MapComponent implements OnInit, OnDestroy {
     },
   };
 
-  mapInitialized = false;
+  searchControl = new FormControl('', [Validators.required]);
+
+  foundPlaces$!: Observable<IPlace[]>;
+
   private subscriptions: Subscription[] = [];
 
   // nzLocations: any[] = [
@@ -74,6 +105,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // ];
 
   ngOnInit(): void {
+    this.searchOnMap();
     // const parser = new DOMParser();
     // const svgString = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FF5733" stroke="#FFFFFF" viewBox="0 0 24 24">
     // <path fill-rule="evenodd" d="M11.293 3.293a1 1 0 0 1 1.414 0l6 6 2 2a1 1 0 0 1-1.414 1.414L19 12.414V19a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-3h-2v3a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2v-6.586l-.293.293a1 1 0 0 1-1.414-1.414l2-2 6-6Z" clip-rule="evenodd"/>
@@ -100,14 +132,29 @@ export class MapComponent implements OnInit, OnDestroy {
   //   );
   // }
 
-  zoomChanged() {
-    if (this.mapInitialized) {
-      const zoomLevel = this.googleMap.getZoom();
-      if (zoomLevel !== undefined && zoomLevel < 2) {
-        console.log('zoomChanged', this.googleMap.getZoom());
-        this.googleMap.googleMap?.setZoom(2);
-      }
-    }
+  searchOnMap() {
+    this.searchControl.valueChanges
+      .pipe(debounceTime(700), distinctUntilChanged())
+      .subscribe((value) => {
+        if (value) {
+          this.foundPlaces$ = this.openStreetMapService.searchPlace(value).pipe(
+            tap((places) => {
+              if (places.length > 0) {
+                const newCenter = {
+                  lat: places[0].geometry.coordinates[1],
+                  lng: places[0].geometry.coordinates[0],
+                };
+                this.googleMap.panTo(newCenter);
+                this.googleMap.googleMap?.setZoom(10);
+              }
+            })
+          );
+        }
+      });
+  }
+
+  trackById(index: number, place: IPlace) {
+    return place.properties.place_id;
   }
 
   ngOnDestroy(): void {

@@ -1,10 +1,28 @@
-<google-map
-  height="600px"
-  width="1000px"
-  [options]="options"
-  (zoomChanged)="zoomChanged()"
->
-</google-map>
+<section class="section map__section">
+  <div class="container map__wrapper">
+    <google-map height="600px" width="1000px" [options]="options"></google-map>
+    <div class="map__search">
+      <div class="map__search-field__wrapper">
+        <mat-form-field class="map__search-field">
+          <mat-label>Search on maps</mat-label>
+          <input
+            matInput
+            class="map__search-form__field-input"
+            value="Warszawa"
+            [formControl]="searchControl"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <div *ngIf="foundPlaces$ | async as foundPlaces">
+          <ng-container *ngFor="let place of foundPlaces; trackBy: trackById">
+            {{ place | json }}
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- @for (location of nzLocations; track location; let index = $index) {
   <map-advanced-marker
