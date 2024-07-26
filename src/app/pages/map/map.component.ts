@@ -41,6 +41,8 @@ import {
 } from '@angular/common';
 import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
 
+type Coords = { lat: number; lng: number };
+
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -85,6 +87,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   foundPlaces$!: Observable<IPlace[]>;
   foundPlacesDetails$!: Observable<IPlaceDetails[]>;
+
+  markedLocations: Array<Coords> = [];
 
   private subscriptions: Subscription[] = [];
 
@@ -137,12 +141,12 @@ export class MapComponent implements OnInit, OnDestroy {
     // });
   }
 
-  // onMarkerClick(marker: MapAdvancedMarker) {
-  //   this.infoWindow.openAdvancedMarkerElement(
-  //     marker.advancedMarker,
-  //     marker.advancedMarker.title
-  //   );
-  // }
+  onMarkerClick(marker: MapAdvancedMarker) {
+    this.infoWindow.openAdvancedMarkerElement(
+      marker.advancedMarker,
+      marker.advancedMarker.title
+    );
+  }
 
   searchOnMap() {
     const valueChangesSubscription = this.searchControl.valueChanges
@@ -191,8 +195,26 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
+  onMapDblClick(event: google.maps.MapMouseEvent) {
+    const lat = event.latLng?.lat();
+    const lng = event.latLng?.lng();
+
+    if (lat !== undefined && lng !== undefined) {
+      this.markedLocations.push({ lat, lng });
+    }
+  }
+
   trackById(index: number, placeDetail: IPlaceDetails) {
     return placeDetail.place_id;
+  }
+
+  trackByCoords(index: number, coordinates: Coords) {
+    return index;
+  }
+
+  useMarkedLocation(index: number) {
+    this.googleMap.panTo(this.markedLocations[index]);
+    this.googleMap.googleMap?.setZoom(8);
   }
 
   ngOnDestroy(): void {

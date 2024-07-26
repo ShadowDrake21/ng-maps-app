@@ -1,72 +1,137 @@
 <section class="section map__section">
-  <div class="container map__wrapper">
-    <google-map height="600px" width="1000px" [options]="options"></google-map>
-    <div class="map__search">
-      <div class="map__search-field__wrapper">
-        <mat-form-field class="map__search-field">
-          <mat-label>Search on maps</mat-label>
-          <input
-            matInput
-            class="map__search-form__field-input"
-            value="Warszawa"
-            [formControl]="searchControl"
-          />
-        </mat-form-field>
-      </div>
-      <div>
-        <div *ngIf="foundPlacesDetails$ | async as foundPlaces">
-          <ng-container *ngFor="let place of foundPlaces; trackBy: trackById">
-            <div>
-              <h3>Name: {{ place.localname }}</h3>
-              <h5>Type: {{ place.type }}</h5>
-              <p>Country: {{ place.country_code | uppercase }}</p>
-              <p *ngIf="place.addresstags.postcode">
-                Post code: {{ place.addresstags.postcode }}
-              </p>
-              <div>
-                <h6>Additional info</h6>
-                <img
-                  *ngIf="place.extratags.flag"
-                  [src]="place.extratags.flag"
-                  width="160"
-                  height="100"
-                  alt="flag"
-                />
-                <p *ngIf="place.extratags.population">
-                  Population: {{ +place.extratags.population / 1000000 }} mln.
-                </p>
-                <p *ngIf="place.extratags.phone">
-                  Phone: {{ place.extratags.phone }}
-                </p>
-                <p *ngIf="place.extratags.wikidata">
-                  Wikidata: {{ place.extratags.wikidata }}
-                </p>
-                <p *ngIf="place.extratags.wikipedia">
-                  Wikidata: {{ place.extratags.wikipedia }}
-                </p>
-                <p *ngIf="place.extratags.website">
-                  Website: {{ place.extratags.website }}
-                </p>
-                <p *ngIf="place.extratags.phone">
-                  Phone: {{ place.extratags.phone }}
-                </p>
-              </div>
-            </div>
-          </ng-container>
+  <div class="container map__container" style="height: 100%">
+    <div class="map__wrapper">
+      <google-map
+        height="600px"
+        width="1000px"
+        [options]="options"
+        (mapDblclick)="onMapDblClick($event)"
+      >
+        @for (location of markedLocations; track location; let index = $index) {
+        <map-advanced-marker
+          #markerElem="mapAdvancedMarker"
+          [position]="{ lat: location.lat, lng: location.lng }"
+          [title]="'Location ' + (index + 1)"
+          (mapClick)="onMarkerClick(markerElem)"
+        />}</google-map
+      >
+      <div class="map__search">
+        <div class="map__search-field__wrapper">
+          <mat-form-field class="map__search-field">
+            <mat-label>Search on maps</mat-label>
+            <input
+              matInput
+              class="map__search-form__field-input"
+              value="Warszawa"
+              [formControl]="searchControl"
+            />
+          </mat-form-field>
         </div>
+        <div class="map__search-result__wrapper">
+          <div
+            *ngIf="foundPlacesDetails$ | async as foundPlaces"
+            class="map__search-result"
+          >
+            <ng-container
+              *ngFor="let place of foundPlaces; trackBy: trackById"
+              class="map__search-result__inner"
+            >
+              <div class="map__search-result__item">
+                <h3 class="map__search-result__item-title">
+                  {{ place.localname }}
+                </h3>
+                <h5 class="map__search-result__type">Type: {{ place.type }}</h5>
+                <p class="map__search-result__field">
+                  Country: {{ place.country_code | uppercase }}
+                </p>
+                <p
+                  *ngIf="place.addresstags.postcode"
+                  class="map__search-result__field"
+                >
+                  Post code: {{ place.addresstags.postcode }}
+                </p>
+                <div class="map__search-result__additional">
+                  <h6 class="map__search-result__additional-title">
+                    Additional info
+                  </h6>
+                  <img
+                    *ngIf="place.extratags.flag"
+                    [src]="place.extratags.flag"
+                    width="160"
+                    height="100"
+                    alt="flag"
+                    class="map__search-result__flag"
+                  />
+                  <p
+                    *ngIf="place.extratags.population"
+                    class="map__search-result__field"
+                  >
+                    Population: {{ +place.extratags.population / 1000000 }} mln.
+                  </p>
+                  <p
+                    *ngIf="place.extratags.phone"
+                    class="map__search-result__field"
+                  >
+                    Phone: {{ place.extratags.phone }}
+                  </p>
+                  <p
+                    *ngIf="place.extratags.wikidata"
+                    class="map__search-result__field"
+                  >
+                    Wikidata: {{ place.extratags.wikidata }}
+                  </p>
+                  <p
+                    *ngIf="place.extratags.wikipedia"
+                    class="map__search-result__field"
+                  >
+                    Wikidata: {{ place.extratags.wikipedia }}
+                  </p>
+                  <p
+                    *ngIf="place.extratags.website"
+                    class="map__search-result__field"
+                  >
+                    Website: {{ place.extratags.website }}
+                  </p>
+                  <p
+                    *ngIf="place.extratags.phone"
+                    class="map__search-result__field"
+                  >
+                    Phone: {{ place.extratags.phone }}
+                  </p>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="markedLocations.length > 0" class="marked-locations">
+      <h4 class="marked-locations__title">Marked locations:</h4>
+      <div class="marked-locations__list">
+        <button
+          *ngFor="
+            let location of markedLocations;
+            index as i;
+            trackBy: trackByCoords
+          "
+          class="marked-locations__item"
+          (click)="useMarkedLocation(i)"
+        >
+          <div class="marked-locations__item-field">
+            <span class="marked-locations__item-field__span">Lat:</span>
+            {{ location.lat }}
+          </div>
+          <div class="marked-locations__item-field">
+            <span class="marked-locations__item-field__span">Lat:</span>
+            {{ location.lng }}
+          </div>
+        </button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- @for (location of nzLocations; track location; let index = $index) {
-  <map-advanced-marker
-  #markerElem="mapAdvancedMarker"
-  [position]="{ lat: location.lat, lng: location.lng }"
-  [content]="location.content"
-  [title]="'Location ' + (index + 1)"
-  (mapClick)="onMarkerClick(markerElem)"
-  />
+<!--
 } @for (location of auLocations; track location; let index = $index) {
   <map-advanced-marker
   #markerElem="mapAdvancedMarker"
