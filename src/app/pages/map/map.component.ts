@@ -42,8 +42,10 @@ import {
   UpperCasePipe,
 } from '@angular/common';
 import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
-import { NoAvailableInfoComponent } from './no-available-info/no-available-info.component';
-import { ExtraInfoComponent } from './extra-info/extra-info.component';
+import { NoAvailableInfoComponent } from './components/no-available-info/no-available-info.component';
+import { ExtraInfoComponent } from './components/extra-info/extra-info.component';
+import { ICoords } from '../../shared/models/helper.interface';
+import { OpenWeatherMap } from '../../core/services/openWeatherMap.service';
 
 type Coords = { lat: number; lng: number };
 
@@ -70,6 +72,7 @@ type Coords = { lat: number; lng: number };
 export class MapComponent implements OnInit, OnDestroy {
   // App: 'Miejsca które chcę zobaczyć'
   private openStreetMapService = inject(OpenStreetMap);
+  private openWeatherMapService = inject(OpenWeatherMap);
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
   @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
@@ -208,7 +211,18 @@ export class MapComponent implements OnInit, OnDestroy {
 
     if (lat !== undefined && lng !== undefined) {
       this.markedLocations.push({ lat, lng });
+      this.getReversePlace({ latitude: lat, longitude: lng });
     }
+  }
+
+  getReversePlace(coords: ICoords) {
+    const reversePlaceSubscription = this.openWeatherMapService
+      .findPlaceByCoords(coords)
+      .subscribe((place) => {
+        this.searchControl.setValue(place[0].name);
+      });
+
+    this.subscriptions.push(reversePlaceSubscription);
   }
 
   trackById(index: number, placeDetail: IPlaceDetails) {
@@ -222,6 +236,10 @@ export class MapComponent implements OnInit, OnDestroy {
   useMarkedLocation(index: number) {
     this.googleMap.panTo(this.markedLocations[index]);
     this.googleMap.googleMap?.setZoom(8);
+    this.getReversePlace({
+      latitude: this.markedLocations[index].lat,
+      longitude: this.markedLocations[index].lng,
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IPlaceDetails } from '../../../shared/models/placeDetails.interface';
+import { IPlaceDetails } from '../../../../shared/models/placeDetails.interface';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({
@@ -9,7 +9,6 @@ import { TitleCasePipe } from '@angular/common';
   template: ` <p class="map__search-result__field">
     {{ transferData.field | titlecase }}: {{ transferData.value }}
   </p>`,
-  styleUrl: './extra-info.component.scss',
 })
 export class ExtraInfoComponent {
   @Input({ required: true }) transferData!: { field: string; value: string };
