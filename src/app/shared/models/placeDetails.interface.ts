@@ -45,8 +45,8 @@ export interface IPlaceDetailsAddresstags {
 }
 
 export interface IPlaceDetailsExtratags {
-  wikidata: string;
-  wikipedia: string;
+  wikidata?: string;
+  wikipedia?: string;
   flag?: string;
   website?: string;
   phone?: string;

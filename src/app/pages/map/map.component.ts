@@ -16,6 +16,7 @@ import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  find,
   map,
   Observable,
   Subscription,
@@ -37,9 +38,12 @@ import {
   JsonPipe,
   NgFor,
   NgIf,
+  NgTemplateOutlet,
   UpperCasePipe,
 } from '@angular/common';
 import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
+import { NoAvailableInfoComponent } from './no-available-info/no-available-info.component';
+import { ExtraInfoComponent } from './extra-info/extra-info.component';
 
 type Coords = { lat: number; lng: number };
 
@@ -56,6 +60,9 @@ type Coords = { lat: number; lng: number };
     NgFor,
     JsonPipe,
     UpperCasePipe,
+    NoAvailableInfoComponent,
+    NgTemplateOutlet,
+    ExtraInfoComponent,
   ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',

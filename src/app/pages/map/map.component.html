@@ -62,42 +62,74 @@
                     alt="flag"
                     class="map__search-result__flag"
                   />
-                  <p
-                    *ngIf="place.extratags.population"
-                    class="map__search-result__field"
-                  >
-                    Population: {{ +place.extratags.population / 1000000 }} mln.
-                  </p>
-                  <p
-                    *ngIf="place.extratags.phone"
-                    class="map__search-result__field"
-                  >
-                    Phone: {{ place.extratags.phone }}
-                  </p>
-                  <p
-                    *ngIf="place.extratags.wikidata"
-                    class="map__search-result__field"
-                  >
-                    Wikidata: {{ place.extratags.wikidata }}
-                  </p>
-                  <p
-                    *ngIf="place.extratags.wikipedia"
-                    class="map__search-result__field"
-                  >
-                    Wikidata: {{ place.extratags.wikipedia }}
-                  </p>
-                  <p
-                    *ngIf="place.extratags.website"
-                    class="map__search-result__field"
-                  >
-                    Website: {{ place.extratags.website }}
-                  </p>
-                  <p
-                    *ngIf="place.extratags.phone"
-                    class="map__search-result__field"
-                  >
-                    Phone: {{ place.extratags.phone }}
-                  </p>
+
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      place.extratags.population ? infoField : noInfo
+                    "
+                    [ngTemplateOutletContext]="{
+                      obj: {
+                        field: 'population',
+                        value: place.extratags.population
+                      }
+                    }"
+                  ></ng-container>
+
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      place.extratags.phone ? infoField : noInfo
+                    "
+                    [ngTemplateOutletContext]="{
+                      obj: {
+                        field: 'phone',
+                        value: place.extratags.phone
+                      }
+                    }"
+                  ></ng-container>
+
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      place.extratags.wikidata ? infoField : noInfo
+                    "
+                    [ngTemplateOutletContext]="{
+                      obj: {
+                        field: 'wikidata',
+                        value: place.extratags.wikidata
+                      }
+                    }"
+                  ></ng-container>
+
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      place.extratags.wikipedia ? infoField : noInfo
+                    "
+                    [ngTemplateOutletContext]="{
+                      obj: {
+                        field: 'wikipedia',
+                        value: place.extratags.wikipedia
+                      }
+                    }"
+                  ></ng-container>
+
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      place.extratags.website ? infoField : noInfo
+                    "
+                    [ngTemplateOutletContext]="{
+                      obj: {
+                        field: 'website',
+                        value: place.extratags.website
+                      }
+                    }"
+                  ></ng-container>
+
+                  <ng-template #infoField let-obj="obj"
+                    ><app-extra-info [transferData]="obj"
+                  /></ng-template>
+
+                  <ng-template #noInfo let-obj="obj">
+                    <app-no-available-info [infoMessage]="obj.field" />
+                  </ng-template>
                 </div>
               </div>
             </ng-container>
