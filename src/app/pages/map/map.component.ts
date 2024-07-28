@@ -4,6 +4,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import {
@@ -15,10 +16,12 @@ import {
 import {
   combineLatest,
   debounceTime,
+  delay,
   distinctUntilChanged,
   find,
   map,
   Observable,
+  of,
   Subscription,
   switchMap,
   tap,
@@ -100,6 +103,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   markedLocations: Array<Coords> = [];
 
+  loadingSig = signal(false);
+
   private subscriptions: Subscription[] = [];
 
   // nzLocations: any[] = [
@@ -160,12 +165,13 @@ export class MapComponent implements OnInit, OnDestroy {
 
   searchOnMap() {
     const valueChangesSubscription = this.searchControl.valueChanges
-      .pipe(debounceTime(700), distinctUntilChanged())
-      .subscribe((value) => {
-        if (value) {
-          this.foundPlacesDetails$ = this.openStreetMapService
-            .searchPlace(value)
-            .pipe(
+      .pipe(
+        tap(() => this.loadingSig.set(true)),
+        debounceTime(700),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          if (value) {
+            return this.openStreetMapService.searchPlace(value).pipe(
               tap((places) => {
                 if (places.length > 0) {
                   const newCenter = {
@@ -186,11 +192,22 @@ export class MapComponent implements OnInit, OnDestroy {
                     place.properties.osm_id
                   )
                 );
+
                 return combineLatest(detailsObservables);
-              })
+              }),
+              tap(() => this.loadingSig.set(false))
             );
-        }
+          } else {
+            this.loadingSig.set(false);
+            return [];
+          }
+        })
+      )
+      .subscribe((details) => {
+        this.foundPlacesDetails$ = of(details);
       });
+
+    // this.foundPlacesDetails$.subscribe();
 
     this.subscriptions.push(valueChangesSubscription);
   }
@@ -229,7 +246,7 @@ export class MapComponent implements OnInit, OnDestroy {
     return placeDetail.place_id;
   }
 
-  trackByCoords(index: number, coordinates: Coords) {
+  trackByIndex(index: number, coordinates: Coords) {
     return index;
   }
 

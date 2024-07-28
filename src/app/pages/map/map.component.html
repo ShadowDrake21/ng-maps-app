@@ -27,7 +27,11 @@
             />
           </mat-form-field>
         </div>
-        <div class="map__search-result__wrapper">
+
+        <div
+          class="map__search-result__wrapper"
+          *ngIf="loadingSig() === false; else loading"
+        >
           <div
             *ngIf="foundPlacesDetails$ | async as foundPlaces"
             class="map__search-result"
@@ -135,6 +139,9 @@
             </ng-container>
           </div>
         </div>
+        <ng-template #loading>
+          <h6>Loading...</h6>
+        </ng-template>
       </div>
     </div>
     <div *ngIf="markedLocations.length > 0" class="marked-locations">
@@ -144,7 +151,7 @@
           *ngFor="
             let location of markedLocations;
             index as i;
-            trackBy: trackByCoords
+            trackBy: trackByIndex
           "
           class="marked-locations__item"
           (click)="useMarkedLocation(i)"

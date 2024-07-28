@@ -19,7 +19,8 @@
 .map__search {
   height: 600px;
   overflow: auto;
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   display: flex;
   justify-content: start;
   flex-direction: column;
