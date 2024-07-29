@@ -12,9 +12,8 @@
           #markerElem="mapAdvancedMarker"
           [position]="{ lat: location.lat, lng: location.lng }"
           [title]="'Location ' + (index + 1)"
-          (mapClick)="onMarkerClick(markerElem)"
-        />}</google-map
-      >
+        />}
+      </google-map>
       <div class="map__search">
         <div class="map__search-field__wrapper">
           <mat-form-field class="map__search-field">
@@ -140,7 +139,9 @@
           </div>
         </div>
         <ng-template #loading>
-          <h6>Loading...</h6>
+          <div class="map__loading">
+            <h6>Loading...</h6>
+          </div>
         </ng-template>
       </div>
     </div>
@@ -180,4 +181,3 @@
   (mapClick)="onMarkerClick(markerElem)"
   />
 } -->
-<!-- <map-info-window #infoWindow></map-info-window> -->

@@ -99,10 +99,10 @@
   flex-wrap: wrap;
   gap: 5px 15px;
   overflow-x: auto;
+  padding: 5px 10px;
 }
 
 .marked-locations__item {
-  width: max-content;
   cursor: pointer;
   display: flex;
   gap: 15px;
@@ -111,10 +111,11 @@
   padding: 5px;
   font-size: 16px;
   line-height: 20px;
-  width: 30%;
+  width: 33%;
+  justify-content: center;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 }
 
@@ -123,4 +124,12 @@
 
 .marked-locations__item-field__span {
   font-weight: 600;
+}
+
+.map__loading {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
