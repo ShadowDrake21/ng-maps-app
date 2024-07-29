@@ -1,0 +1,23 @@
+.auth__section {
+  max-height: 100vh;
+  height: 100%;
+}
+
+.auth__content-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.auth__content-title {
+  font-size: 38px;
+  line-height: 42px;
+}
+
+.auth__content-subtitle {
+  font-size: 34px;
+  line-height: 38px;
+}
