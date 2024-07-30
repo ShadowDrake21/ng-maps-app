@@ -1,0 +1,28 @@
+<section class="section auth__section">
+  <div class="container">
+    <div class="auth__content-wrapper">
+      <div class="auth__content">
+        <ng-container *ngIf="!isAuth; else authorization">
+          <h1 class="auth__content-title poppins-bold">
+            Places I want to visit
+          </h1>
+          <h2 class="auth__content-subtitle poppins-semibold">
+            Angular, Google Maps | Drake21
+          </h2>
+          <div class="auth__content-btns">
+            <app-auth-btn
+              class="auth__content-btns__item-wrapper"
+              (onAuth)="onSignIn()"
+            ></app-auth-btn>
+            <app-auth-btn
+              class="auth__content-btns__item-wrapper"
+              [isGithub]="false"
+            ></app-auth-btn></div
+        ></ng-container>
+        <ng-template #authorization>
+          <mat-spinner></mat-spinner>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>

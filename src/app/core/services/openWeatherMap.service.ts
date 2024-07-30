@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ICoords } from '../../shared/models/helper.interface';
-import { IReversePlace } from '../../shared/models/reversePlace.interface';
+import { ICoords } from '../../shared/models/helper.model';
+import { IReversePlace } from '../../shared/models/reversePlace.model';
 import { BASE_OWP_URL } from '../constants/openWeatherMap.constants';
 import { environment } from '../../../environments/environment.development';
 

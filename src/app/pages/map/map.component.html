@@ -1,9 +1,10 @@
 <section class="section map__section">
+  <app-header />
   <div class="container map__container" style="height: 100%">
     <div class="map__wrapper">
       <google-map
-        height="600px"
-        width="1000px"
+        height="500px"
+        width="800px"
         [options]="options"
         (mapDblclick)="onMapDblClick($event)"
       >
@@ -169,15 +170,5 @@
       </div>
     </div>
   </div>
+  <app-footer />
 </section>
-
-<!--
-} @for (location of auLocations; track location; let index = $index) {
-  <map-advanced-marker
-  #markerElem="mapAdvancedMarker"
-  [position]="{ lat: location.lat, lng: location.lng }"
-  [content]="location.content"
-  [title]="'Location ' + (index + 1)"
-  (mapClick)="onMarkerClick(markerElem)"
-  />
-} -->

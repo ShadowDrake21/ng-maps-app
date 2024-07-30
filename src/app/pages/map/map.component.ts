@@ -35,7 +35,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IPlace } from '../../shared/models/featureCollection.interface';
+import { IPlace } from '../../shared/models/featureCollection.model';
 import {
   AsyncPipe,
   JsonPipe,
@@ -44,11 +44,13 @@ import {
   NgTemplateOutlet,
   UpperCasePipe,
 } from '@angular/common';
-import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
+import { IPlaceDetails } from '../../shared/models/placeDetails.model';
 import { NoAvailableInfoComponent } from './components/no-available-info/no-available-info.component';
 import { ExtraInfoComponent } from './components/extra-info/extra-info.component';
-import { ICoords } from '../../shared/models/helper.interface';
+import { ICoords } from '../../shared/models/helper.model';
 import { OpenWeatherMap } from '../../core/services/openWeatherMap.service';
+import { HeaderComponent } from '../../shared/components/header/header.component';
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 type Coords = { lat: number; lng: number };
 
@@ -68,6 +70,8 @@ type Coords = { lat: number; lng: number };
     NoAvailableInfoComponent,
     NgTemplateOutlet,
     ExtraInfoComponent,
+    HeaderComponent,
+    FooterComponent,
   ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
@@ -114,7 +118,9 @@ export class MapComponent implements OnInit, OnDestroy {
   searchOnMap() {
     const valueChangesSubscription = this.searchControl.valueChanges
       .pipe(
-        tap(() => this.loadingSig.set(true)),
+        tap(() => {
+          this.loadingSig.set(true);
+        }),
         debounceTime(700),
         distinctUntilChanged(),
         switchMap((value) => {
@@ -131,7 +137,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 }
               }),
               switchMap((places) => {
-                console.log('places', places);
                 const detailsObservables = places.map((place) =>
                   this.openStreetMapService.getPlaceDetails(
                     this.getCorrectOsmType(
@@ -143,7 +148,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
                 return combineLatest(detailsObservables);
               }),
-              tap(() => this.loadingSig.set(false))
+              tap(() => {
+                this.loadingSig.set(false);
+              })
             );
           } else {
             this.loadingSig.set(false);
@@ -154,8 +161,6 @@ export class MapComponent implements OnInit, OnDestroy {
       .subscribe((details) => {
         this.foundPlacesDetails$ = of(details);
       });
-
-    // this.foundPlacesDetails$.subscribe();
 
     this.subscriptions.push(valueChangesSubscription);
   }
@@ -184,9 +189,15 @@ export class MapComponent implements OnInit, OnDestroy {
     this.loadingSig.set(true);
     const reversePlaceSubscription = this.openWeatherMapService
       .findPlaceByCoords(coords)
-      .pipe(tap(() => this.loadingSig.set(false)))
+      .pipe(
+        tap(() => {
+          this.loadingSig.set(false);
+        })
+      )
       .subscribe((place) => {
-        this.searchControl.setValue(place[0].name);
+        if (this.searchControl.value !== place[0].name) {
+          this.searchControl.setValue(place[0].name);
+        }
       });
 
     this.subscriptions.push(reversePlaceSubscription);

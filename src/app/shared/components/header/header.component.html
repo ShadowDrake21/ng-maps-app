@@ -1,0 +1,14 @@
+<header class="header">
+  <mat-toolbar class="header__toolbar">
+    <span class="header__toolbar-text" *ngIf="!noUser; else guestMode"
+      >{{ user?.displayName }} | {{ user?.email }}</span
+    >
+    <ng-template #guestMode>
+      <span class="header__toolbar-text">{{ noUser }}</span>
+    </ng-template>
+    <button mat-stroked-button *ngIf="user" (click)="onSignOut()">
+      Sign out
+    </button>
+    <a mat-stroked-button *ngIf="!user" routerLink="/"> Sign in </a>
+  </mat-toolbar>
+</header>

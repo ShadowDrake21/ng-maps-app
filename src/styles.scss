@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
 
 html,
 body {
@@ -11,6 +11,25 @@ body {
 
 .container {
   max-width: 1420px;
+  height: 100%;
   padding: 0 10px;
   margin: 0 auto;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
 }
