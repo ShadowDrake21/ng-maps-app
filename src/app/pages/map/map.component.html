@@ -146,18 +146,12 @@
         </ng-template>
       </div>
     </div>
-    <div *ngIf="markedLocations.length > 0" class="marked-locations">
-      <h4 class="marked-locations__title">Marked locations:</h4>
+    <div class="marked-locations">
+      <h4 class="marked-locations__title poppins-bold">Marked locations:</h4>
+
       <div class="marked-locations__list">
-        <button
-          *ngFor="
-            let location of markedLocations;
-            index as i;
-            trackBy: trackByIndex
-          "
-          class="marked-locations__item"
-          (click)="useMarkedLocation(i)"
-        >
+        @for (location of markedLocations; track $index; let i = $index) {
+        <button class="marked-locations__item" (click)="useMarkedLocation(i)">
           <div class="marked-locations__item-field">
             <span class="marked-locations__item-field__span">Lat:</span>
             {{ location.lat }}
@@ -165,8 +159,12 @@
           <div class="marked-locations__item-field">
             <span class="marked-locations__item-field__span">Lat:</span>
             {{ location.lng }}
-          </div>
-        </button>
+          </div></button
+        >} @empty {
+        <p class="marked-locations__list-empty poppins-semibold">
+          There are no marked locations
+        </p>
+        }
       </div>
     </div>
   </div>

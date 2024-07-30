@@ -50,7 +50,7 @@ export class AuthComponent {
   openSnackBar(text: string) {
     this._snackBar.openFromComponent(SnackbarComponent, {
       data: text,
-      horizontalPosition: 'center',
+      horizontalPosition: 'left',
       verticalPosition: 'bottom',
       duration: 5000,
     });
