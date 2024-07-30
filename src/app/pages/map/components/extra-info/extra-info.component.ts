@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IPlaceDetails } from '../../../../shared/models/placeDetails.interface';
+import { IPlaceDetails } from '../../../../shared/models/placeDetails.model';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({

@@ -5,9 +5,9 @@ import { BASE_OSM_URL } from '../constants/openStreetMap.constants';
 import {
   IPlace,
   IPlaceCollection,
-} from '../../shared/models/featureCollection.interface';
-import { IPlaceDetails } from '../../shared/models/placeDetails.interface';
-import { ILookup } from '../../shared/models/lookup.interface';
+} from '../../shared/models/featureCollection.model';
+import { IPlaceDetails } from '../../shared/models/placeDetails.model';
+import { ILookup } from '../../shared/models/lookup.model';
 
 @Injectable({
   providedIn: 'root',

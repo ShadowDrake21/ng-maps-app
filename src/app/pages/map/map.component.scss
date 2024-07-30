@@ -1,5 +1,6 @@
 .map__section {
   height: 100vh;
+  position: relative;
 }
 
 .map__container {
@@ -17,7 +18,7 @@
 }
 
 .map__search {
-  height: 600px;
+  height: 500px;
   overflow: auto;
   max-width: 400px;
   width: 100%;

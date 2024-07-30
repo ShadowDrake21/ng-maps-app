@@ -21,3 +21,12 @@
   font-size: 34px;
   line-height: 38px;
 }
+
+.auth__content-btns {
+  display: flex;
+  gap: 20px;
+}
+
+.auth__content-btns__item-wrapper {
+  width: 100%;
+}

@@ -1,0 +1,14 @@
+.header {
+  position: absolute;
+  width: 100%;
+
+  &__toolbar-text {
+    text-align: right;
+  }
+
+  &__toolbar {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+  }
+}
