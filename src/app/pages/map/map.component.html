@@ -156,24 +156,40 @@
       <div class="marked-locations__list">
         @if (markedLocations$ | async; as markedLocations) { @for (location of
         markedLocations; track $index; let i = $index) {
-        <button
+        <div
           class="marked-locations__item"
           *ngIf="location.location as innerLocation"
-          (click)="useMarkedLocation(innerLocation)"
         >
-          <div class="marked-locations__item-field">
-            <span class="marked-locations__item-field__span">Lat:</span>
-            {{ innerLocation.latitude }}
-          </div>
-          <div class="marked-locations__item-field">
-            <span class="marked-locations__item-field__span">Lat:</span>
-            {{ innerLocation.longitude }}
-          </div></button
-        >} @empty {
+          <button
+            class="marked-locations__item-inner"
+            (click)="useMarkedLocation(innerLocation)"
+          >
+            <div class="marked-locations__item-field">
+              <span class="marked-locations__item-field__span">Lat:</span>
+              {{ innerLocation.latitude }}
+            </div>
+            <div class="marked-locations__item-field">
+              <span class="marked-locations__item-field__span">Lat:</span>
+              {{ innerLocation.longitude }}
+            </div>
+          </button>
+          <button
+            type="button"
+            class="marked-locations__item-remove--hover"
+            (click)="onRemoveMarkedLocation(location.id)"
+          >
+            &#10006;
+          </button>
+        </div>
+        } @empty { @if (!markedLocationsLoadingSig()) {
         <p class="marked-locations__list-empty poppins-semibold">
           There are no marked locations
         </p>
-        }}
+        } @else {
+        <p class="marked-locations__list-empty poppins-semibold">
+          Marked locations loading...
+        </p>
+        } }}
       </div>
     </div>
   </div>
