@@ -40,8 +40,10 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 import { MarkedLocationsService } from '../../core/services/markedLocations.service';
 import { User } from '@angular/fire/auth';
 import { getUserFromLS } from '../../shared/utils/localStorage.utils';
-
-type Coords = { lat: number; lng: number };
+import { mapOptions } from './constants/map.constants';
+import { trackById } from './utils/tracking.utils';
+import { getCorrectOsmType } from './utils/heplers.utils';
+import { SearchResultComponent } from './components/search-result/search-result.component';
 
 @Component({
   selector: 'app-map',
@@ -61,6 +63,7 @@ type Coords = { lat: number; lng: number };
     ExtraInfoComponent,
     HeaderComponent,
     FooterComponent,
+    SearchResultComponent,
   ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
@@ -72,23 +75,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
 
-  options: google.maps.MapOptions = {
-    mapId: 'b2d26fb27242f142',
-    center: { lat: 51.5073219, lng: -0.1276474 },
-    zoom: 6,
-    minZoom: 2,
-    fullscreenControl: false,
-    restriction: {
-      latLngBounds: {
-        north: 85,
-        south: -85,
-        west: -180,
-        east: 180,
-      },
-      strictBounds: false,
-    },
-  };
-
+  options: google.maps.MapOptions = mapOptions;
   user: User | null = null;
 
   searchControl = new FormControl('', [Validators.required]);
@@ -106,6 +93,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.user = getUserFromLS();
+    this.loadUsersMarkedLocations();
+    this.searchOnMap();
+  }
+
+  loadUsersMarkedLocations() {
     if (this.user) {
       this.markedLocationsLoadingSig.set(true);
       const readMarkedLocationsSubscription = this.markedLocationsService
@@ -116,8 +108,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
       this.subscriptions.push(readMarkedLocationsSubscription);
     }
-
-    this.searchOnMap();
   }
 
   searchOnMap() {
@@ -170,15 +160,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscriptions.push(valueChangesSubscription);
   }
 
-  getCorrectOsmType(value: 'node' | 'way' | 'relation') {
-    if (value === 'node') {
-      return 'N';
-    } else if (value === 'way') {
-      return 'W';
-    } else {
-      return 'R';
-    }
-  }
+  getCorrectOsmType = getCorrectOsmType;
 
   onMapDblClick(event: google.maps.MapMouseEvent) {
     if (this.user) {
@@ -210,18 +192,22 @@ export class MapComponent implements OnInit, OnDestroy {
           this.loadingSig.set(false);
         })
       )
-      .subscribe((place) => {
-        if (this.searchControl.value !== place[0].name) {
-          this.searchControl.setValue(place[0].name);
+      .subscribe((places) => {
+        if (
+          places.length > 0 &&
+          places[0].name &&
+          this.searchControl.value !== places[0].name
+        ) {
+          this.searchControl.setValue(places[0].name);
+        } else {
+          this.searchControl.setValue(null);
         }
       });
 
     this.subscriptions.push(reversePlaceSubscription);
   }
 
-  trackById(index: number, placeDetail: IPlaceDetails) {
-    return placeDetail.place_id;
-  }
+  trackById = trackById;
 
   useMarkedLocation(coords: ICoords) {
     this.googleMap.panTo({ lat: coords.latitude, lng: coords.longitude });

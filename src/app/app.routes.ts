@@ -18,9 +18,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    loadComponent: () =>
-      import('./pages/not-found/not-found.component').then(
-        (c) => c.NotFoundComponent
-      ),
+    redirectTo: '/map',
   },
 ];
