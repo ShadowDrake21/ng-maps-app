@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthBtnComponent } from './components/auth-btn/auth-btn.component';
 import { AuthService } from '../../core/authentication/auth.service';
-import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';

@@ -6,7 +6,6 @@ import {
   doc,
   Firestore,
   getDocs,
-  setDoc,
 } from '@angular/fire/firestore';
 import { ICoords, IMarkedLocation } from '../../shared/models/helper.model';
 import {
@@ -15,7 +14,6 @@ import {
   from,
   map,
   Observable,
-  of,
   throwError,
 } from 'rxjs';
 

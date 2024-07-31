@@ -35,55 +35,6 @@
   width: 100%;
 }
 
-.map__search-form__field-input {
-}
-
-.map__search-result__wrapper {
-  padding-top: 10px;
-}
-
-.map__search-result {
-  padding-bottom: 10px;
-}
-
-.map__search-result__inner {
-}
-
-.map__search-result__item {
-  border-bottom: 1px solid black;
-  margin-bottom: 10px;
-}
-
-.map__search-result__item-title {
-  font-size: 24px;
-  line-height: 28px;
-  padding-bottom: 10px;
-  background-color: #f1f1f1;
-  padding: 5px 10px;
-}
-
-.map__search-result__type {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.map__search-result__field {
-}
-
-.map__search-result__additional {
-}
-
-.map__search-result__additional-title {
-  font-size: 18px;
-  line-height: 22px;
-  background-color: #e6e6e6;
-  padding: 5px 10px;
-}
-
-.map__search-result__flag {
-  padding: 0 10px;
-}
-
 .marked-locations {
   padding: 10px 0;
   max-height: 210px;
@@ -118,9 +69,6 @@
   &:hover {
     transform: scale(1.02);
   }
-}
-
-.marked-locations__item-field {
 }
 
 .marked-locations__item-field__span {
