@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import {
@@ -6,17 +5,8 @@ import {
   GithubAuthProvider,
   signInWithPopup,
   signOut,
-  User,
 } from '@angular/fire/auth';
-import {
-  catchError,
-  from,
-  map,
-  Observable,
-  of,
-  throwError,
-  timeout,
-} from 'rxjs';
+import { catchError, from, map, Observable, of } from 'rxjs';
 import { IAuthResponse } from '../../shared/models/auth.model';
 import { removeFromLocalStorage } from '../../shared/utils/localStorage.utils';
 import { AUTH_LS_NAME } from '../constants/auth.constants';

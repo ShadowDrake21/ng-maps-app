@@ -152,6 +152,7 @@
       </div>
     </div>
     <div class="marked-locations">
+      @if (user) {
       <h4 class="marked-locations__title poppins-bold">Marked locations:</h4>
       <div class="marked-locations__list">
         @if (markedLocations$ | async; as markedLocations) { @for (location of
@@ -191,6 +192,13 @@
         </p>
         } }}
       </div>
+      } @else {
+      <h4
+        class="marked-locations__title marked-locations__unauthorized poppins-bold"
+      >
+        To mark locations, you should sign in using GitHub profile...
+      </h4>
+      }
     </div>
   </div>
   <app-footer />

@@ -161,3 +161,11 @@
   background-color: #ffffff;
   color: #000;
 }
+
+.marked-locations__unauthorized {
+  max-height: 160px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
