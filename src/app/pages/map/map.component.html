@@ -8,12 +8,17 @@
         [options]="options"
         (mapDblclick)="onMapDblClick($event)"
       >
-        @for (location of markedLocations; track location; let index = $index) {
+        @if (markedLocations$ | async; as markedLocations) { @for (location of
+        markedLocations; track location; let index = $index) {
         <map-advanced-marker
           #markerElem="mapAdvancedMarker"
-          [position]="{ lat: location.lat, lng: location.lng }"
+          *ngIf="location.location as innerLocation"
+          [position]="{
+            lat: innerLocation.latitude,
+            lng: innerLocation.longitude
+          }"
           [title]="'Location ' + (index + 1)"
-        />}
+        />}}
       </google-map>
       <div class="map__search">
         <div class="map__search-field__wrapper">
@@ -146,27 +151,45 @@
         </ng-template>
       </div>
     </div>
-    <div *ngIf="markedLocations.length > 0" class="marked-locations">
-      <h4 class="marked-locations__title">Marked locations:</h4>
+    <div class="marked-locations">
+      <h4 class="marked-locations__title poppins-bold">Marked locations:</h4>
       <div class="marked-locations__list">
-        <button
-          *ngFor="
-            let location of markedLocations;
-            index as i;
-            trackBy: trackByIndex
-          "
+        @if (markedLocations$ | async; as markedLocations) { @for (location of
+        markedLocations; track $index; let i = $index) {
+        <div
           class="marked-locations__item"
-          (click)="useMarkedLocation(i)"
+          *ngIf="location.location as innerLocation"
         >
-          <div class="marked-locations__item-field">
-            <span class="marked-locations__item-field__span">Lat:</span>
-            {{ location.lat }}
-          </div>
-          <div class="marked-locations__item-field">
-            <span class="marked-locations__item-field__span">Lat:</span>
-            {{ location.lng }}
-          </div>
-        </button>
+          <button
+            class="marked-locations__item-inner"
+            (click)="useMarkedLocation(innerLocation)"
+          >
+            <div class="marked-locations__item-field">
+              <span class="marked-locations__item-field__span">Lat:</span>
+              {{ innerLocation.latitude }}
+            </div>
+            <div class="marked-locations__item-field">
+              <span class="marked-locations__item-field__span">Lat:</span>
+              {{ innerLocation.longitude }}
+            </div>
+          </button>
+          <button
+            type="button"
+            class="marked-locations__item-remove--hover"
+            (click)="onRemoveMarkedLocation(location.id)"
+          >
+            &#10006;
+          </button>
+        </div>
+        } @empty { @if (!markedLocationsLoadingSig()) {
+        <p class="marked-locations__list-empty poppins-semibold">
+          There are no marked locations
+        </p>
+        } @else {
+        <p class="marked-locations__list-empty poppins-semibold">
+          Marked locations loading...
+        </p>
+        } }}
       </div>
     </div>
   </div>

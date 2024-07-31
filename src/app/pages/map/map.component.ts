@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   inject,
   OnDestroy,
@@ -7,19 +6,11 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import {
-  GoogleMap,
-  GoogleMapsModule,
-  MapAdvancedMarker,
-  MapInfoWindow,
-} from '@angular/google-maps';
+import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import {
   combineLatest,
   debounceTime,
-  delay,
   distinctUntilChanged,
-  find,
-  map,
   Observable,
   of,
   Subscription,
@@ -29,12 +20,7 @@ import {
 import { OpenStreetMap } from '../../core/services/openStreetMap.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IPlace } from '../../shared/models/featureCollection.model';
 import {
   AsyncPipe,
@@ -47,10 +33,13 @@ import {
 import { IPlaceDetails } from '../../shared/models/placeDetails.model';
 import { NoAvailableInfoComponent } from './components/no-available-info/no-available-info.component';
 import { ExtraInfoComponent } from './components/extra-info/extra-info.component';
-import { ICoords } from '../../shared/models/helper.model';
+import { ICoords, IMarkedLocation } from '../../shared/models/helper.model';
 import { OpenWeatherMap } from '../../core/services/openWeatherMap.service';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { MarkedLocationsService } from '../../core/services/markedLocations.service';
+import { User } from '@angular/fire/auth';
+import { getUserFromLS } from '../../shared/utils/localStorage.utils';
 
 type Coords = { lat: number; lng: number };
 
@@ -77,9 +66,9 @@ type Coords = { lat: number; lng: number };
   styleUrl: './map.component.scss',
 })
 export class MapComponent implements OnInit, OnDestroy {
-  // App: 'Miejsca które chcę zobaczyć'
   private openStreetMapService = inject(OpenStreetMap);
   private openWeatherMapService = inject(OpenWeatherMap);
+  private markedLocationsService = inject(MarkedLocationsService);
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
 
@@ -100,18 +89,34 @@ export class MapComponent implements OnInit, OnDestroy {
     },
   };
 
+  user: User | null = null;
+
   searchControl = new FormControl('', [Validators.required]);
 
   foundPlaces$!: Observable<IPlace[]>;
   foundPlacesDetails$!: Observable<IPlaceDetails[]>;
 
-  markedLocations: Array<Coords> = [];
+  markedLocations$: Observable<IMarkedLocation[]> =
+    this.markedLocationsService.markedLocations$;
 
   loadingSig = signal(false);
+  markedLocationsLoadingSig = signal(false);
 
   private subscriptions: Subscription[] = [];
 
   ngOnInit(): void {
+    this.user = getUserFromLS();
+    if (this.user) {
+      this.markedLocationsLoadingSig.set(true);
+      const readMarkedLocationsSubscription = this.markedLocationsService
+        .readMarkedLocations(this.user.uid)
+        .subscribe(() => {
+          this.markedLocationsLoadingSig.set(false);
+        });
+
+      this.subscriptions.push(readMarkedLocationsSubscription);
+    }
+
     this.searchOnMap();
   }
 
@@ -176,12 +181,23 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   onMapDblClick(event: google.maps.MapMouseEvent) {
-    const lat = event.latLng?.lat();
-    const lng = event.latLng?.lng();
+    if (this.user) {
+      const lat = event.latLng?.lat();
+      const lng = event.latLng?.lng();
 
-    if (lat !== undefined && lng !== undefined) {
-      this.markedLocations.push({ lat, lng });
-      this.getReversePlace({ latitude: lat, longitude: lng });
+      if (lat !== undefined && lng !== undefined) {
+        this.markedLocationsService.writeMarkedLocation(this.user?.uid, {
+          latitude: lat,
+          longitude: lng,
+        });
+
+        const readMarkedLocationsSubscription = this.markedLocationsService
+          .readMarkedLocations(this.user.uid)
+          .subscribe();
+        this.getReversePlace({ latitude: lat, longitude: lng });
+
+        this.subscriptions.push(readMarkedLocationsSubscription);
+      }
     }
   }
 
@@ -207,17 +223,20 @@ export class MapComponent implements OnInit, OnDestroy {
     return placeDetail.place_id;
   }
 
-  trackByIndex(index: number, coordinates: Coords) {
-    return index;
+  useMarkedLocation(coords: ICoords) {
+    this.googleMap.panTo({ lat: coords.latitude, lng: coords.longitude });
+    this.googleMap.googleMap?.setZoom(8);
+    this.getReversePlace(coords);
   }
 
-  useMarkedLocation(index: number) {
-    this.googleMap.panTo(this.markedLocations[index]);
-    this.googleMap.googleMap?.setZoom(8);
-    this.getReversePlace({
-      latitude: this.markedLocations[index].lat,
-      longitude: this.markedLocations[index].lng,
-    });
+  onRemoveMarkedLocation(id: string) {
+    if (this.user) {
+      const removeMarkedLocation = this.markedLocationsService
+        .removeMarkedLocation(this.user.uid, id)
+        .subscribe();
+
+      this.subscriptions.push(removeMarkedLocation);
+    }
   }
 
   ngOnDestroy(): void {

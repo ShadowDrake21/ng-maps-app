@@ -86,6 +86,8 @@
 
 .marked-locations {
   padding: 10px 0;
+  max-height: 210px;
+  height: 100%;
 }
 
 .marked-locations__title {
@@ -94,7 +96,8 @@
 }
 
 .marked-locations__list {
-  max-height: 170px;
+  max-height: 160px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -104,16 +107,13 @@
 }
 
 .marked-locations__item {
+  position: relative;
   cursor: pointer;
-  display: flex;
-  gap: 15px;
   border: 1px solid #000;
   transition: all 0.3s;
-  padding: 5px;
   font-size: 16px;
   line-height: 20px;
   width: 33%;
-  justify-content: center;
 
   &:hover {
     transform: scale(1.02);
@@ -133,4 +133,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.marked-locations__item-inner {
+  cursor: pointer;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 16px;
+  width: calc(100% - 25px);
+  padding: 5px;
+  border: 0;
+}
+
+.marked-locations__item-remove--hover {
+  position: absolute;
+  cursor: pointer;
+  right: 0px;
+  top: 0px;
+  width: 25px;
+  height: 100%;
+  border-radius: 0;
+  border: 0;
+  transition: all 0.3s;
+  border-left: 1px solid #000000;
+  background-color: #ffffff;
+  color: #000;
 }
