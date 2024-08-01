@@ -1,4 +1,5 @@
 <div class="map__search-result">
+  @if (foundPlaces) {
   <ng-container
     *ngFor="let place of foundPlaces; trackBy: trackById"
     class="map__search-result__inner"
@@ -83,6 +84,10 @@
           <app-no-available-info [infoMessage]="obj.field" />
         </ng-template>
       </div>
-    </div>
-  </ng-container>
+    </div> </ng-container
+  >}@else {
+  <div class="map__search-result__noresults">
+    <p>There are no results</p>
+  </div>
+  }
 </div>

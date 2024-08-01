@@ -1,8 +1,9 @@
 <section class="section map__section">
   <app-header />
-  <div class="container map__container" style="height: 100%">
+  <div class="container map__container">
     <div class="map__wrapper">
       <google-map
+        class="map__entity"
         height="500px"
         width="800px"
         [options]="options"
@@ -38,8 +39,7 @@
           *ngIf="loadingSig() === false; else loading"
         >
           <app-search-result
-            *ngIf="foundPlacesDetails$ | async as foundPlaces"
-            [foundPlacesDetails]="foundPlaces"
+            [foundPlacesDetails]="foundPlacesDetails$ | async"
           ></app-search-result>
         </div>
         <ng-template #loading>

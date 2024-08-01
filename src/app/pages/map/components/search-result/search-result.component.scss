@@ -33,4 +33,9 @@
   &__wrapper {
     padding-top: 10px;
   }
+
+  &__noresults {
+    display: flex;
+    justify-content: center;
+  }
 }

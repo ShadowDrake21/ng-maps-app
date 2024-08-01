@@ -1,8 +1,14 @@
 <header class="header">
   <mat-toolbar class="header__toolbar">
-    <span class="header__toolbar-text" *ngIf="!noUser; else guestMode"
-      >{{ user?.displayName }} | {{ user?.email }}</span
-    >
+    <div class="header__toolbar-text" *ngIf="!noUser; else guestMode">
+      <span class="header__toolbar-text__span"
+        >{{ user?.displayName ?? "" | truncateText : 15 }} |
+      </span>
+
+      <span class="header__toolbar-text__span">{{
+        user?.email ?? "" | truncateText : 15
+      }}</span>
+    </div>
     <ng-template #guestMode>
       <span class="header__toolbar-text">{{ noUser }}</span>
     </ng-template>

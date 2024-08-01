@@ -12,11 +12,18 @@ import { AuthService } from '../../../core/authentication/auth.service';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { isAuthResponse } from '../../utils/dataCheckings.utils';
+import { TruncateTextPipe } from '../../pipes/truncate-text.pipe';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, NgIf, RouterLink],
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    NgIf,
+    RouterLink,
+    TruncateTextPipe,
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
