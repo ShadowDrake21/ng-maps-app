@@ -1,6 +1,5 @@
 .footer {
   overflow-x: hidden;
-  position: absolute;
   bottom: 0;
   padding: 15px 0;
   background-color: #000;
@@ -13,5 +12,12 @@
 
   &__link {
     color: inherit;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer__link {
+    font-size: 14px;
+    line-height: 18px;
   }
 }

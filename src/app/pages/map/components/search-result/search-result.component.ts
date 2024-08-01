@@ -21,7 +21,7 @@ import { NoAvailableInfoComponent } from '../no-available-info/no-available-info
 })
 export class SearchResultComponent {
   @Input({ required: true, alias: 'foundPlacesDetails' })
-  foundPlaces: IPlaceDetails[] = [];
+  foundPlaces: IPlaceDetails[] | null = null;
 
   trackById = trackById;
 }
