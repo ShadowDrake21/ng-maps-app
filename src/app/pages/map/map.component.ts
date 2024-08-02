@@ -11,6 +11,7 @@ import {
   combineLatest,
   debounceTime,
   distinctUntilChanged,
+  EMPTY,
   Observable,
   of,
   Subscription,
@@ -83,8 +84,7 @@ export class MapComponent implements OnInit, OnDestroy {
   foundPlaces$!: Observable<IPlace[]>;
   foundPlacesDetails$!: Observable<IPlaceDetails[]>;
 
-  markedLocations$: Observable<IMarkedLocation[]> =
-    this.markedLocationsService.markedLocations$;
+  markedLocations$: Observable<IMarkedLocation[]> = EMPTY;
 
   loadingSig = signal(false);
   markedLocationsLoadingSig = signal(false);
@@ -95,6 +95,9 @@ export class MapComponent implements OnInit, OnDestroy {
     this.user = getUserFromLS();
     this.loadUsersMarkedLocations();
     this.searchOnMap();
+    if (this.user) {
+      this.markedLocations$ = this.markedLocationsService.markedLocations$;
+    }
   }
 
   loadUsersMarkedLocations() {
